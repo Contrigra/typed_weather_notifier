@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.10
 from coordinates import get_gps_coordinates 
-from weather_api_service import get weather
+from weather_api_service import get_weather
 from weather_formatter import format_weather
 
 def main():
