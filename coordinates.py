@@ -1,8 +1,9 @@
 from typing import NamedTuple
 from dataclasses import dataclass
+import geocoder
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(frozen=True)
 class Coordinates(NamedTuple):
     latitude: float
     longitude: float
@@ -11,8 +12,9 @@ class Coordinates(NamedTuple):
 # TODO find and obtain my GPS data
 
 def get_gps_coordinates() -> Coordinates:
-    """Returns current coordinates using GPS app"""
-    return Coordinates(longitude=10, latitude=20)
+    """Returns current coordinates using geocoder app"""
 
+    g = geocoder.ip('me')
+    latitude, longitude = g.latlng
 
-coordinates = get_gps_coordinates()
+    return Coordinates(longitude=longitude, latitude=longitude)
