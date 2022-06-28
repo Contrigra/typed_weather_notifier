@@ -27,7 +27,7 @@ class Weather:
     city: str
 
 
-def get_weather(coordinates: Coordinates):
+def get_weather(coordinates: Coordinates) -> Weather:
     """Requests weather in OpenWeatherApi and returns it"""
 
     return Weather(
