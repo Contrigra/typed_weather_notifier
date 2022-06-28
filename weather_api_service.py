@@ -1,9 +1,13 @@
+import urllib
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from typing import TypeAlias
 
-from coordinates import Coordinates
+import requests
+
+import config
+from coordinates import Coordinates, get_gps_coordinates
 
 Celsius: TypeAlias = int
 
@@ -29,11 +33,20 @@ class Weather:
 
 def get_weather(coordinates: Coordinates) -> Weather:
     """Requests weather in OpenWeatherApi and returns it"""
+    openweather_response = _get_openweather_response(
+        longitude=coordinates.longitude, latitude=coordinates.latitude)
+    weather = _parse_openweather_response(openweather_response)
 
-    return Weather(
-        temperature=21,
-        weather_type=WeatherType.CLEAR,
-        sunrise=datetime.fromisoformat('2022-06-20 04:11:00'),
-        sunset=datetime.fromisoformat('2022-06-20 21:15:00'),
-        city='Saint_Petersburg'
-    )
+    return weather
+
+
+def _get_openweather_response(longitude: float, latitude: float) -> dict:
+    url = config.OPENWEATHER_URL.format(longitude=longitude, latitude=latitude)
+    return requests.get(url).json()
+
+
+def _parse_openweather_response(openweather_response: dict) -> Weather:
+    pass
+
+
+a = get_weather(get_gps_coordinates())
