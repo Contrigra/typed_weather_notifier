@@ -45,7 +45,22 @@ def _get_openweather_response(longitude: float, latitude: float) -> dict:
     return requests.get(url).json()
 
 
-def _parse_openweather_response(openweather_response: dict) -> Weather:
+def _parse_openweather_response(openweather_dict: dict) -> Weather:
+    return Weather(temperature=_parse_temperature(openweather_dict))
+
+
+def _parse_temperature(openweather_dict: dict) -> Celsius:
+    return round(openweather_dict['main']['temp'])
+
+
+def _parse_weather_type(openweather_dict: dict) -> WeatherType:
+    pass
+
+
+def _parse_sun_time(openweather_dict: dict) -> datetime:
+    pass
+
+def _parse_city(openweather_dict: dict) -> str:
     pass
 
 
