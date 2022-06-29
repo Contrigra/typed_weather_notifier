@@ -1,13 +1,13 @@
-import urllib
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import TypeAlias
+from typing import TypeAlias, Literal
 
 import requests
 
 import config
 from coordinates import Coordinates, get_gps_coordinates
+from exceptions import ApiServiceError
 
 Celsius: TypeAlias = int
 
@@ -46,7 +46,10 @@ def _get_openweather_response(longitude: float, latitude: float) -> dict:
 
 
 def _parse_openweather_response(openweather_dict: dict) -> Weather:
-    return Weather(temperature=_parse_temperature(openweather_dict))
+    return Weather(temperature=_parse_temperature(openweather_dict),
+                   weather_type=_parse_weather_type(openweather_dict),
+                   sunrise=_parse_sun_time(openweather_dict, 'sunrise'),
+                   sunset=_parse_sun_time(openweather_dict, 'sunset'))
 
 
 def _parse_temperature(openweather_dict: dict) -> Celsius:
@@ -54,11 +57,29 @@ def _parse_temperature(openweather_dict: dict) -> Celsius:
 
 
 def _parse_weather_type(openweather_dict: dict) -> WeatherType:
-    pass
+    try:
+        weather_type_id = str(openweather_dict['weather'][0]['id'])
+    except (IndexError, KeyError):
+        raise ApiServiceError
+    weather_types = {
+        '1': WeatherType.THUNDERSTORM,
+        '3': WeatherType.DRIZZLE,
+        '5': WeatherType.RAIN,
+        '6': WeatherType.SNOW,
+        '7': WeatherType.FOG,
+        '800': WeatherType.CLEAR,
+        '80': WeatherType.CLOUDS
+    }
+    for _id, _weather_type in weather_types.items():
+        if weather_type_id == _id:
+            return _weather_type
+    raise ApiServiceError
 
 
-def _parse_sun_time(openweather_dict: dict) -> datetime:
+def _parse_sun_time(openweather_dict: dict,
+                    time: Literal['sunrise'] | Literal['sunset']) -> datetime:
     pass
+
 
 def _parse_city(openweather_dict: dict) -> str:
     pass
