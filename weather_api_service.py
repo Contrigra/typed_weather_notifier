@@ -49,7 +49,8 @@ def _parse_openweather_response(openweather_dict: dict) -> Weather:
     return Weather(temperature=_parse_temperature(openweather_dict),
                    weather_type=_parse_weather_type(openweather_dict),
                    sunrise=_parse_sun_time(openweather_dict, 'sunrise'),
-                   sunset=_parse_sun_time(openweather_dict, 'sunset'))
+                   sunset=_parse_sun_time(openweather_dict, 'sunset'),
+                   city=_parse_openweather_city(openweather_dict),)
 
 
 def _parse_temperature(openweather_dict: dict) -> Celsius:
@@ -71,18 +72,22 @@ def _parse_weather_type(openweather_dict: dict) -> WeatherType:
         '80': WeatherType.CLOUDS
     }
     for _id, _weather_type in weather_types.items():
-        if weather_type_id == _id:
+        # startswith is faster than ==
+        if weather_type_id.startswith(_id):
             return _weather_type
+
+
     raise ApiServiceError
 
 
 def _parse_sun_time(openweather_dict: dict,
                     time: Literal['sunrise'] | Literal['sunset']) -> datetime:
-    pass
+    return datetime.fromtimestamp(openweather_dict['sys'][time])
 
 
-def _parse_city(openweather_dict: dict) -> str:
-    pass
+def _parse_openweather_city(openweather_dict: dict) -> str:
+    return openweather_dict['name']
 
 
 a = get_weather(get_gps_coordinates())
+print(a)
