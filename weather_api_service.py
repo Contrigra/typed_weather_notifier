@@ -6,7 +6,7 @@ from typing import TypeAlias, Literal
 import requests
 
 import config
-from coordinates import Coordinates, get_gps_coordinates
+from coordinates import Coordinates
 from exceptions import ApiServiceError
 
 Celsius: TypeAlias = int
@@ -50,7 +50,7 @@ def _parse_openweather_response(openweather_dict: dict) -> Weather:
                    weather_type=_parse_weather_type(openweather_dict),
                    sunrise=_parse_sun_time(openweather_dict, 'sunrise'),
                    sunset=_parse_sun_time(openweather_dict, 'sunset'),
-                   city=_parse_openweather_city(openweather_dict),)
+                   city=_parse_openweather_city(openweather_dict), )
 
 
 def _parse_temperature(openweather_dict: dict) -> Celsius:
@@ -76,7 +76,6 @@ def _parse_weather_type(openweather_dict: dict) -> WeatherType:
         if weather_type_id.startswith(_id):
             return _weather_type
 
-
     raise ApiServiceError
 
 
@@ -87,7 +86,3 @@ def _parse_sun_time(openweather_dict: dict,
 
 def _parse_openweather_city(openweather_dict: dict) -> str:
     return openweather_dict['name']
-
-
-a = get_weather(get_gps_coordinates())
-print(a)
