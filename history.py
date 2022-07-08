@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from exceptions import CantWriteHistory
 from weather_api_service import Weather
 from typing import Protocol
 from pathlib import Path
@@ -21,8 +22,11 @@ class PlainFileWeatherStorage:
     def save(self, weather: Weather) -> None:
         now = datetime.now()
         formatted_weather = format_weather(weather)
-        with open(self._file, "a") as f:
-            f.write(f"{now}\n{formatted_weather}\n")
+        try:
+            with open(self._file, "a") as f:
+                f.write(f"{now}\n{formatted_weather}\n")
+        except OSError:
+            raise CantWriteHistory
 
 def save_weather(weather: Weather, storage: WeatherStorage) -> None:
     """Saves weather in a storage"""

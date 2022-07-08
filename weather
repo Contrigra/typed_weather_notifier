@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from coordinates import get_gps_coordinates
+from exceptions import CantWriteHistory
 from history import save_weather, PlainFileWeatherStorage
 from weather_api_service import get_weather
 from weather_formatter import format_weather
@@ -11,7 +12,10 @@ from weather_formatter import format_weather
 def main():
     coordinates = get_gps_coordinates()
     weather = get_weather(coordinates)
-    save_weather(weather, PlainFileWeatherStorage(Path.cwd() / 'history.txt'))
+    try:
+        save_weather(weather, PlainFileWeatherStorage(Path.cwd() / 'history.txt'))
+    except CantWriteHistory:
+        print("The program somehow couldn't save history")
     print(format_weather(weather))
 
 
